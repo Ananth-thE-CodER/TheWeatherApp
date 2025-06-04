@@ -6,7 +6,7 @@ export class GeoCoderService {
     async getLocationJSON() {
         const locService = new LocationService();
         let locData = await locService.getUserLocation();
-        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=geojson&lat=${locData.lat}&lon=${locData.long}`, {mode: 'cors'});
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${locData.lat}&lon=${locData.long}&zoom=10&addressdetails=1`, {mode: 'cors'});
         let data = await response.json();
         return data;
     }
@@ -14,7 +14,7 @@ export class GeoCoderService {
     async getTownName() {
         let dataJSON = await this.getLocationJSON();
         if (dataJSON) {
-            return dataJSON.features[0].properties.address.town;
+            return dataJSON.name;
         } 
     }
 }

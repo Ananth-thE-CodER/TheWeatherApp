@@ -1,17 +1,16 @@
 import images from "./imageLoader";
+import { WeatherService } from "./weather";
 
 export class UIBuilderService {
-    // constructor() {
-    //     this.rainyCondition = ['type_10', 'type_11', 'type_13', 'type_14', 'type_2', 'type_20', 'type_21', 'type_22', 'type_23', 'type_24', 'type_25', 'type_26', 'type_3', 'type_32', 'type_36', 'type_4', 'type_5', 'type_6']
-    //     this.snowy = ['type_1', 'type_16', 'type_17', 'type_31', 'type_33', 'type_34', 'type_35', 'type_40', 'type_9']
-    //     this.foggy = ['type_12', 'type_19', 'type_30', 'type_8']
-    //     this.cloudy = ['type_27', 'type_28', 'type_41', 'type_42']
-    //     this.thunder = ['type_18', 'type_37', 'type_38']
-    //     this.stormy = ['type_15', 'type_7']
-    // }
+
+    constructor(weatherService) {
+        this.weatherService = weatherService;
+    }
 
     buildCurrentUI(time, data) {
         let dataToday = this.extractToday(data);
+
+        document.querySelector("input.search").value = data.resolvedAddress;
 
         // let html = '<div class="current-weather">';
         let html = '<div class="left-pane">'
@@ -19,24 +18,25 @@ export class UIBuilderService {
                 html += `<span class="time">${time}</span>`
             html += '</div>'
             html += '<div class="current-temp">'
-                html += `<span class="temp">${dataToday.temp}</span>`
+                html += `<span class="temp">${this.degreefy(dataToday.temp)}</span>`
                 html += `<div class="weather-icon-large">` // Weather icon here !!
                     html += `<img src='${images[dataToday.icon]}' alt='${dataToday.conditions}'/>`
                 html += '</div>'
             html += '</div>'
             html += '<div class="low-high">'
                 html += '<div class="high-temp">'
-                    html += `<span class="high-temp">High: ${dataToday.tempmax}</span>`
+                    html += `<span class="high-temp">High: ${this.degreefy(dataToday.tempmax)}</span>`
                 html += '</div>'
                 html += '<div class="low-temp">'
-                    html += `<span class="low-temp">Low: ${dataToday.tempmin}</span>`
+                    html += `<span class="low-temp">Low: ${this.degreefy(dataToday.tempmin)}</span>`
                 html += '</div>'
             html += '</div>'
         html += '</div>'
         html += '<div class="right-pane">'
             html += '<div class="weather-status">'
+                html += `<span class="place">${data.resolvedAddress.split(',')[0]}</span>`
                 html += `<span class="status">${dataToday.conditions}</span>`
-                html += `<span class="feels-like">${dataToday.feelslike}</span>`
+                html += `<span class="feels-like">${this.degreefy(dataToday.feelslike)}</span>`
             html += '</div>'
         html += '</div>'
 
@@ -50,7 +50,7 @@ export class UIBuilderService {
         for (const hour of hourlyForecast) {
             html += `<div class="forecast-card" title='${hour.conditions}'>`
                 html += '<div class="forecast-temp">'
-                    html += `<span class="forecast-temp">${hour.temp}</span>`
+                    html += `<span class="forecast-temp">${this.degreefy(hour.temp)}</span>`
                 html += '</div>'
                 html += '<div class="forecast-icon">'
                     html += `<img src='${images[hour.icon]}' alt='${hour.conditions}'/>`
@@ -75,7 +75,7 @@ export class UIBuilderService {
                     html += `<img src='${images[day.icon]}' alt='${day.conditions}'/>`
                 html += '</div>'
                 html += '<div class="forecast-high-low">'
-                    html += `<span class="forecast-high-low">${day.tempmax}/${day.tempmin}</span>`
+                    html += `<span class="forecast-high-low">${this.degreefy(day.tempmax)}/${this.degreefy(day.tempmin)}</span>`
                 html += '</div>'
             html += '</div>'
         }
@@ -135,5 +135,9 @@ export class UIBuilderService {
         }
 
         return hourlyData;
+    }
+
+    degreefy(num) {
+       return this.weatherService.unit === 'metric' ? `${num}\u00B0` : `${num}\u00B0`
     }
 }

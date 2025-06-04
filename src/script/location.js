@@ -11,10 +11,12 @@ export class LocationService {
                         const lat = position.coords.latitude;
                         const long = position.coords.longitude;
                         resolve({ lat, long });
+                        console.log(lat, long);
                     },
                     (error) => {
-                        // Do nothing.
-                        reject("No Access")
+                        // User denied access. Let's go to Times Square then.
+                        let [lat, long] = [40.75806633046647, -73.98554104232731]
+                        resolve({lat, long})
                     }
                 )
             }

@@ -7,17 +7,14 @@ export class WeatherService {
     }
 
     async getWeatherJSON() {
-        const urlified = urlify.create({
-            addEToUmlauts: true,
-            szToSs: true,
-            spaces: "_",
-            nonPrintable: "_",
-            trim: true
-        });
-        let loc_text = urlified(this.town);
- 
         let response = await fetch(this.makeURL(), {mode: 'cors'});
-        const data = await response.json();
+        let data = {}
+        if (response.status == '200') {
+            data = await response.json();
+        }
+        else {
+            data = {'error': 'Cannot find location.'}
+        }
         return data
     } 
 
@@ -26,6 +23,14 @@ export class WeatherService {
     }
 
     makeURL() {
-        return `${this.getBaseURL()} + ${this.town}/next7days?unitGroup=${this.unit}&key=8MG3DYMAA28YWNTK8F7YBKKSG&contentType=json`
+        const urlified = urlify.create({
+            addEToUmlauts: true,
+            szToSs: true,
+            spaces: "_",
+            nonPrintable: "_",
+            trim: true
+        });
+        let loc_text = urlified(this.town);
+        return `${this.getBaseURL()} + ${loc_text}/next7days?unitGroup=${this.unit}&key=8MG3DYMAA28YWNTK8F7YBKKSG&contentType=json`
     }
 }
