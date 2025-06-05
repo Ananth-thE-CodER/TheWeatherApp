@@ -96,15 +96,6 @@ class Main {
         let strTime = hours + ':' + minutes + ' ' + ampm;
         return strTime;
     }
-
-    switchTheme(e) {
-        if (e.target.checked) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
-        else {
-            document.documentElement.setAttribute('data-theme', 'light');
-        }    
-    }
 }
 
 const img = document.createElement('img');
